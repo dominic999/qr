@@ -43,9 +43,23 @@ window.onload = ()=>{
             if((j<20 && j>16) && (i>2 && i<6)){
                 elementNou.style.backgroundColor = "black";
             }
+            if(j == 7 && i > 8 && i < 14 && i % 2 == 1){
+                elementNou.style.backgroundColor = "black";
+            }
+            if(i == 7 && j > 8 && j < 14 && j % 2 == 1){
+                elementNou.style.backgroundColor = "black";
+            }
+
         }
+
     }
 
+    let eroare = document.getElementById("error");
+    let formular = document.getElementById("formular");
+    formular.addEventListener("submit", (e)=>{
+        e.preventDefault();
+        console.log(formular.value);
+    })
 
 
 }
