@@ -16,6 +16,17 @@ body{
 
 }
 
+#mesaje{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+#type{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
 #canvas{
 
     width: 210px;

@@ -15,15 +15,34 @@
         <fieldset id = "error">
             <legend>Error correction level</legend>
             <label for="low">Low</label>
-            <input type="radio" name="eroare" id="low">
+            <input type="radio" name="eroare" value = "0" id="low">
             <label for="medium">Medium</label>
-            <input type="radio" name="eroare" id="medium">
+            <input type="radio" name="eroare" value = "1" id="medium">
             <label for="quartile">Quartile</label>
-            <input type="radio" name="eroare" id="quartile">
+            <input type="radio" name="eroare" value = "2" id="quartile">
             <label for="high">High</label>
-            <input type="radio" name="eroare" id="high">
+            <input type="radio" name="eroare" value = "3" id="high">
             <button type="submit">Submit</button>
         </fieldset>
+    </form>
+    <form action="" id = "type">
+        <fieldset>
+            <legend>Ce tip de date este? </legend>
+            <label for="alpha">Alphanumeric</label>
+            <input type="radio" name="date" id="alpha" value = "0">
+            <label for="numeric">Numeric</label>
+            <input type="radio" name="date" id="numeric" value = "1">
+            <label for="byte">Byte</label>
+            <input type="radio" name="date" id="byte" value = "2">
+            <label for="kanji">Kanji</label>
+            <input type="radio" name="date" id="kanji" value = "3">
+            <button type="submit">Submit</button>
+        </fieldset>
+    </form>
+    <form action="" id = "mesaje">
+        <label for="mesaj">Mesajul: </label>
+        <input type="text" name="mesaj" id="mesaj">
+        <button type="submit">Submit</button>
     </form>
     
     <script src="creare.js"></script>
