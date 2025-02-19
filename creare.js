@@ -1,12 +1,40 @@
+//O sa trec dimensiunea cu rosu
+//Am trecut codul tipului de date cu albastru
 window.onload = ()=>{
+
+    const limitaRand = 9;
+    const limitaColoane = "U";
+    const dimensiune = 21;
 
     function transformareBinara(numar){
         let numarBinar = Array();
         while (numar > 0) {
             numarBinar.unshift(numar%2);
-            numar /= 2;
+            numar = Math.floor(numar/2);
         }
         return numarBinar;
+    }
+
+
+    //Todo sa schimb culoarea de fundal in negru
+    function setareDimensiune(dimensiune){
+        let coloane = ["U", "T"];
+        console.log("dimensiune " + dimensiune);
+        let counter = 0;
+        for (let i = 19; i > 15; i-=(counter+1)%2){
+            let rand = Math.floor(i).toString();
+            console.log("actual " + dimensiune[counter]);
+            let celula = document.getElementsByClassName(coloane[counter%2] + " " + rand);
+            if (dimensiune[counter] == 1){
+                celula[0].style.backgroundColor = "red";
+            }
+            else{
+                console.log(celula[0]);
+                celula[0].style.backgroundColor = "yellow";
+            }
+            counter++;
+        }
+
     }
 
     //! Aici am creat inceputul qr-ului(adica baza)
@@ -102,11 +130,11 @@ window.onload = ()=>{
     })
 
     let mesaj = document.getElementById("mesaj");
+    let data;
     //! Aici setez tipul de date
     type.addEventListener("submit", (e)=>{
         e.preventDefault();
         let date = document.getElementsByName("date");
-        let data;
         for (let i = 0; i < date.length; i++){
             if(date[i].checked){
                 data = date[i].value;
@@ -137,10 +165,11 @@ window.onload = ()=>{
             data = "kenji";
             cod = Array.from("1000")
         }
+        //Todo sa schimb culoarea de fundal in negru
         while(counter < 4){
             if(cod[counter] == 1){
                 let celula = document.getElementsByClassName(rand + " "+ coloana);
-                celula[0].style.backgroundColor = "black";
+                celula[0].style.backgroundColor = "blue";
             }
             if(counter % 2 == 0){
                 coloana = coloana.charCodeAt(0) - 1;
@@ -156,7 +185,6 @@ window.onload = ()=>{
         type.style.display = "none";
         mesaje.style.display = "block"
         let lungimeMesaj;
-        console.log(data);
         switch(data){
             case "byte":
                 switch(selected){
@@ -199,6 +227,9 @@ window.onload = ()=>{
     let mes;
     let valoriAlpha = {};
     //! Aici o sa creez un dictionar pentru valoriile alphanumerica
+    for (let i = 0; i < 10; i++){
+        valoriAlpha[i.toString()] = i;
+    }
     for (let i = 0; i < 26; i++){
         valoriAlpha[String.fromCharCode(i + "A".charCodeAt(0))] = i + 10;
     }
@@ -207,20 +238,70 @@ window.onload = ()=>{
         valoriAlpha[valoriRandom[i-35]] = i+1;
     }
 
+
+    //! Asta este o functie ce transforma valoarea pe 11 biti daca ok  este 0 si pe 6 daca ok este 1
+    function resize(numar, nrBiti){
+        while(numar.length < nrBiti){
+            numar.unshift(0);
+        }
+        return numar;
+    }
+
     mesaje.addEventListener("submit", (e) => {
         e.preventDefault();
         mes = mesaj.value;
-        mes = Array.from(mes);
+        mes = Array.from(mes.toUpperCase());
+        let dimensiuneMesaj = mes.length;
+        dimensiuneMesaj = transformareBinara(dimensiuneMesaj);
+        dimensiuneMesaj = resize(dimensiuneMesaj, 8);
+        setareDimensiune(dimensiuneMesaj);
         let counter = 0;
         let caractereActuale;
+        let car;
+        let mesajCodat = Array();
+
+
         switch(data){
             case "alpha":
                 while (counter < mes.length){
-                    if(counter == mes.length-1 && counter % 2 == 1){
-                        mes
+                    if(counter == mes.length-1 && counter % 2 == 0){
+                        caractereActuale = transformareBinara(valoriAlpha[mes[counter]]);
+                        caractereActuale = resize(caractereActuale, 6)
+                        mesajCodat.push(caractereActuale);
+                        break;
+                    }
+                    else if(counter % 2 == 1){
+                        car = valoriAlpha[mes[counter]];
+                        caractereActuale+=car;
+                        caractereActuale = transformareBinara(caractereActuale);
+                        caractereActuale = resize(caractereActuale, 11);
+                        mesajCodat.push(caractereActuale);
+                    }
+                    else if(counter % 2 == 0){
+                        caractereActuale = valoriAlpha[mes[counter]] * 45;
                     }
                     counter++;
                 }
+
+                //! Aici setez dimensiuea mesajului
+
+                //! Aici o sa fac plasarea bitilor
+                let co = ["U", "T"];
+                for (let i = 0; i < mesajCodat.length; i++){
+                    let counter = dimensiune;
+                    let coloana;
+                    let caracterActual = mesajCodat[i];
+                    for (let j = 0; j < caracterActual.length && counter > 9; j++){
+                        coloana = co[j%2];
+                        if(caracterActual[j] == 1){
+                            let celula = document.getElementsByClassName(coloana + ' ' + counter);
+                            celula[0].style.backgroundColor = 'black';
+                        }
+                    }
+                }
+            case "byte":
+
+
         }
 
     })
