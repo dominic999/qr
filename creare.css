@@ -8,6 +8,19 @@ body{
     align-content: center;
 }
 
+div{
+    border: 1px rgb(250, 153, 250) solid;
+}
+
+form{
+    width: 50vw;
+    height: 10vh;
+    font-size: 1.4em;
+}
+
+button{
+    font-size: 1em;
+}
 
 #formular{
     position: absolute;
@@ -29,8 +42,8 @@ body{
 }
 #canvas{
 
-    width: 210px;
-    height: 210px;
+    width: 420px;
+    height: 420px;
     display: grid;
     grid-template-columns: repeat(21,1fr);
     grid-template-rows: repeat(21,1fr);

@@ -1,10 +1,30 @@
 //O sa trec dimensiunea cu rosu
 //Am trecut codul tipului de date cu albastru
+//!([(4 * V) + 9], 8)
 window.onload = ()=>{
 
     const limitaRand = 9;
     const limitaColoane = "U";
     const dimensiune = 21;
+
+    function setareLungimeTotala(ec){
+        switch(ec){
+            case "0":
+                return 19;
+                break;
+            case "1":
+                return 16;
+                break;
+            case "2":
+                return 13; 
+                break;
+            case "3":
+                return 9;
+                break;
+
+        }
+    }
+
 
     function transformareBinara(numar){
         let numarBinar = Array();
@@ -15,26 +35,159 @@ window.onload = ()=>{
         return numarBinar;
     }
 
+    //!Aici fac o functie de verificare pentru a nu intra pe zonele rezervate
+    //! 1 este codul pentru depasire rand
+    //! 2 este codul pentru depasire coloana
+    //! 3 este pentru a nu scriepeste "zebre"
+    function delimitare(rand, coloana){
+        coloana = coloana.charCodeAt(0);
+        let a = "A".charCodeAt(0);
+        let z = "A".charCodeAt(0) + 21;
+        if(rand > 21){
+            return 1
+        }
+
+        if (coloana >= (z-9)){
+            if(rand < 9){
+                return 1;
+            }
+        }
+        else if(coloana > a && coloana < (a+9)){
+            if(rand < 10 || rand > 21-10){
+                return 1;
+            }
+        }
+
+        if(coloana < a){
+            return 2;
+        }
+
+        if (rand == 7 || coloana == a+6){
+            return 3;
+        }
+        
+        return 0;
+    }
+
+
+    //!Aici schimb coloanele pe care le folosesc
+    function schimbareColoane(coloane){
+        let ceva = 3;
+        let coloane2 = new Array();
+        for (let i = 0; i < coloane.length; i++){
+            coloane2[i] = String.fromCharCode(coloane[i].charCodeAt(0)-2);
+        }
+        return coloane2;
+    }
+
+    //! parametrul este un array de valori binare
+    function afisareMesaj(mesajCodat){
+        let lungime = mesajCodat.length;
+        let startRand = 15;
+        let coloane = ["U","T"];
+        let culori = ["green", "purple"];
+        let rand = startRand;
+        let coloana = 0;
+        if (mesajCodat[0].length != 8){
+            coloana = 1;
+        }
+        let schimbareRand = -1;
+        let checker;
+        
+        for (let i = 0; i < lungime; i++){
+            for(let j = 0; j < mesajCodat[i].length; j++){
+
+                checker = delimitare(rand, coloane[coloana%2])
+                
+                if(checker == 1){
+                    schimbareRand *= -1;
+                    rand+=schimbareRand;
+                    coloane = schimbareColoane(coloane);
+                }
+
+                let cel = document.getElementsByClassName(coloane[coloana%2] + " " + rand.toString());
+                if(mesajCodat[i][j] == 1){
+                    cel[0].style.backgroundColor = culori[i%2];
+                }
+
+                if(coloana % 2 == 1){
+                    rand+=schimbareRand;
+                }
+                coloana++;
+
+            }
+
+        }
+
+    }
 
     //Todo sa schimb culoarea de fundal in negru
     function setareDimensiune(dimensiune){
         let coloane = ["U", "T"];
-        console.log("dimensiune " + dimensiune);
         let counter = 0;
-        for (let i = 19; i > 15; i-=(counter+1)%2){
-            let rand = Math.floor(i).toString();
-            console.log("actual " + dimensiune[counter]);
-            let celula = document.getElementsByClassName(coloane[counter%2] + " " + rand);
-            if (dimensiune[counter] == 1){
-                celula[0].style.backgroundColor = "red";
+        let lungime = dimensiune.length;
+        rand = 21-2;
+
+        while (counter < dimensiune.length){
+
+            let celula = document.getElementsByClassName(coloane[counter%2] + " " + rand.toString());
+            if(counter%2 == 1){
+                rand--;
             }
-            else{
-                console.log(celula[0]);
+            if(dimensiune[counter] == 1){
+                celula[0].style.backgroundColor = "red";
+            }else{
                 celula[0].style.backgroundColor = "yellow";
             }
+
+
             counter++;
         }
 
+
+    }
+
+
+    //! Aici adaug bitii necesari de final
+    function adaugarePadding(dimenisuneActuala, dimensiuneNecesara){
+        let mesaj = [""];
+        let counter = 0;
+        console.log("actual " + dimenisuneActuala);
+        console.log(dimensiuneNecesara);
+        while(dimenisuneActuala < dimensiuneNecesara && counter < 4){
+            console.log("1");
+            mesaj[0] += "0";
+            counter++;
+            dimenisuneActuala++;
+        }
+        counter = 0;
+        while(dimenisuneActuala % 8 != 0){
+            console.log("2");
+            mesaj[0] += "0";
+            dimenisuneActuala++;
+        }
+        while(dimenisuneActuala < dimensiuneNecesara){
+            console.log("3");
+            if(counter % 2 == 0){
+                mesaj.push["11101100"];
+            }
+            else{
+                mesaj.push["00010001"];
+            }
+            dimenisuneActuala+=8;
+            counter+=1;
+        }
+        console.log(mesaj);
+        
+    }
+
+
+    //! Functia asta primeste un nr binar si il transorma pe cati biti vreau
+    function resize(numar, nrBiti){
+        while(numar.length < nrBiti){
+            numar.unshift(0);
+        }
+        return numar;
     }
 
     //! Aici am creat inceputul qr-ului(adica baza)
@@ -43,8 +196,8 @@ window.onload = ()=>{
         for (let i =1; i < 22; i++){
             let elementNou = document.createElement("div");
             canvas.appendChild(elementNou);
-            elementNou.style.width = "10px";
-            elementNou.style.height = "10px";
+            elementNou.style.width = "20px";
+            elementNou.style.height = "20px";
             let coloana = i + "A".charCodeAt(0) - 1;
             coloana = String.fromCharCode(coloana);
             elementNou.classList.add(j.toString());
@@ -85,6 +238,11 @@ window.onload = ()=>{
         }
 
     }
+
+
+    const dark= String.fromCharCode("A".charCodeAt(0) + 8);
+    let darkModule = document.getElementsByClassName(dark + " 14");
+    darkModule[0].style.backgroundColor = "orange";
 
     //! Aici este error handling-ul
     let eroare = document.getElementById("error");
@@ -131,6 +289,7 @@ window.onload = ()=>{
 
     let mesaj = document.getElementById("mesaj");
     let data;
+    let lungimeTotala;
     //! Aici setez tipul de date
     type.addEventListener("submit", (e)=>{
         e.preventDefault();
@@ -191,78 +350,129 @@ window.onload = ()=>{
                     case "0":
                         mesaj.setAttribute("maxlength", "17");
                         lungimeMesaj = 17;
+                        break;
                     case "1":
                         mesaj.setAttribute("maxlength", "14");
                         lungimeMesaj = 14;
+                        break;
                     case "2":
                         mesaj.setAttribute("maxlength", "11");
                         lungimeMesaj = 11;
+                        break;
                     case "3":
                         mesaj.setAttribute("maxlength", "7");
                         lungimeMesaj = 7;
+                        break;
                  }
+                 break;
 
             case "alpha":
                 switch(selected){
                     case "0":
                         mesaj.setAttribute("maxlength", "25");
                         lungimeMesaj = 25;
+                        break;
                     case "1":
                         lungimeMesaj = 20;
                         mesaj.setAttribute("maxlength", "20");
+                        break;
                     case "2":
                         lungimeMesaj = 16;
                         mesaj.setAttribute("maxlength", "16");
+                        break;
                     case "3":
                         mesaj.setAttribute("maxlength", "10");
                         lungimeMesaj = 10;
+                        break;
                  }
-                
-                
+                 break;
 
-    }
+            case "numeric":
+                switch(selected){
+                    case "0":
+                        mesaj.setAttribute("maxlength", "41");
+                        lungimeMesaj = 41;
+                        break;
+                    case "1":
+                        lungimeMesaj = 34;
+                        mesaj.setAttribute("maxlength", "34");
+                        break;
+                    case "2":
+                        lungimeMesaj = 27;
+                        mesaj.setAttribute("maxlength", "27");
+                        break;
+                    case "3":
+                        mesaj.setAttribute("maxlength", "17");
+                        lungimeMesaj = 17;
+                        break;
+                    
+                 }
+                 break;
+                
+            case "kenji":
+                switch(selected){
+                    case "0":
+                        mesaj.setAttribute("maxlength", "10");
+                        lungimeMesaj = 10;
+                        break;
+                    case "1":
+                        lungimeMesaj = 8;
+                        mesaj.setAttribute("maxlength", "8");
+                        break;
+                    case "2":
+                        lungimeMesaj = 7;
+                        mesaj.setAttribute("maxlength", "7");
+                        break;
+                    case "3":
+                        mesaj.setAttribute("maxlength", "4");
+                        lungimeMesaj = 4;
+                        break;
+                    
+                 }
+                 break;
+                
+            
+        }
+        lungimeTotala = setareLungimeTotala(selected) * 8;
     })
 
-    //!Aici voi citi messjaul
     let mes;
     let valoriAlpha = {};
-    //! Aici o sa creez un dictionar pentru valoriile alphanumerica
+    //! Aici o sa creez un dictionar pentru valoriile alphanumerice
     for (let i = 0; i < 10; i++){
         valoriAlpha[i.toString()] = i;
     }
     for (let i = 0; i < 26; i++){
         valoriAlpha[String.fromCharCode(i + "A".charCodeAt(0))] = i + 10;
     }
-    let valoriRandom = ["space", "$", "%", "*", "+", "-", ".", "/", ":"];
+    let valoriRandom = [" ", "$", "%", "*", "+", "-", ".", "/", ":"];
     for (let i = 35; i < 44; i++){
         valoriAlpha[valoriRandom[i-35]] = i+1;
     }
 
 
-    //! Asta este o functie ce transforma valoarea pe 11 biti daca ok  este 0 si pe 6 daca ok este 1
-    function resize(numar, nrBiti){
-        while(numar.length < nrBiti){
-            numar.unshift(0);
-        }
-        return numar;
-    }
 
+    //!Aici voi citi messjaul
     mesaje.addEventListener("submit", (e) => {
         e.preventDefault();
         mes = mesaj.value;
         mes = Array.from(mes.toUpperCase());
         let dimensiuneMesaj = mes.length;
         dimensiuneMesaj = transformareBinara(dimensiuneMesaj);
-        dimensiuneMesaj = resize(dimensiuneMesaj, 8);
-        setareDimensiune(dimensiuneMesaj);
         let counter = 0;
         let caractereActuale;
         let car;
         let mesajCodat = Array();
+        let lungimeMesajFinala = 0;
 
 
+        //! Aici transform mesjaul in binar
         switch(data){
             case "alpha":
+                dimensiuneMesaj = resize(dimensiuneMesaj, 9);
+                setareDimensiune(dimensiuneMesaj);
+                lungimeMesajFinala = Math.floor(mes.length/2)*11 + mes.length%2*6 + 9 + 4;
+                console.log("lungime " + lungimeMesajFinala);
                 while (counter < mes.length){
                     if(counter == mes.length-1 && counter % 2 == 0){
                         caractereActuale = transformareBinara(valoriAlpha[mes[counter]]);
@@ -283,26 +493,28 @@ window.onload = ()=>{
                     counter++;
                 }
 
-                //! Aici setez dimensiuea mesajului
+                afisareMesaj(mesajCodat);
+                break;
 
-                //! Aici o sa fac plasarea bitilor
-                let co = ["U", "T"];
-                for (let i = 0; i < mesajCodat.length; i++){
-                    let counter = dimensiune;
-                    let coloana;
-                    let caracterActual = mesajCodat[i];
-                    for (let j = 0; j < caracterActual.length && counter > 9; j++){
-                        coloana = co[j%2];
-                        if(caracterActual[j] == 1){
-                            let celula = document.getElementsByClassName(coloana + ' ' + counter);
-                            celula[0].style.backgroundColor = 'black';
-                        }
-                    }
-                }
             case "byte":
-
-
+                dimensiuneMesaj = resize(dimensiuneMesaj, 8);
+                lungimeMesajFinala = mes.length*8 + 12;
+                setareDimensiune(dimensiuneMesaj);
+                while (counter < mes.length){
+                    caractereActuale= mes[counter].charCodeAt(0);
+                    caractereActuale= transformareBinara(caractereActuale);
+                    caractereActuale = resize(caractereActuale, 8);
+                    lungimeMesaj+=8;
+                    mesajCodat.push(caractereActuale);
+                    counter++;
+                }
+                afisareMesaj(mesajCodat);
+                break;
         }
+
+        //! Aici vom face paddingul
+        adaugarePadding(lungimeMesajFinala, lungimeTotala);
+
 
     })
 
