@@ -1,5 +1,6 @@
 //O sa trec dimensiunea cu rosu
 //Am trecut codul tipului de date cu albastru
+//TODO termina paddingul
 //!([(4 * V) + 9], 8)
 window.onload = ()=>{
 
@@ -81,18 +82,15 @@ window.onload = ()=>{
     }
 
     //! parametrul este un array de valori binare
-    function afisareMesaj(mesajCodat){
+    function afisareMesaj(mesajCodat, coloane){
         let lungime = mesajCodat.length;
         let startRand = 15;
-        let coloane = ["U","T"];
         let culori = ["green", "purple"];
         let rand = startRand;
         let coloana = 0;
-        if (mesajCodat[0].length != 8){
-            coloana = 1;
-        }
         let schimbareRand = -1;
         let checker;
+        let cel;
         
         for (let i = 0; i < lungime; i++){
             for(let j = 0; j < mesajCodat[i].length; j++){
@@ -105,7 +103,7 @@ window.onload = ()=>{
                     coloane = schimbareColoane(coloane);
                 }
 
-                let cel = document.getElementsByClassName(coloane[coloana%2] + " " + rand.toString());
+                cel = document.getElementsByClassName(coloane[coloana%2] + " " + rand.toString());
                 if(mesajCodat[i][j] == 1){
                     cel[0].style.backgroundColor = culori[i%2];
                 }
@@ -118,6 +116,15 @@ window.onload = ()=>{
             }
 
         }
+        console.log("mesajul codat este: " + mesajCodat);
+        console.log("merge");
+        if (coloana % 2 == 0){
+            rand-=schimbareRand;
+        }
+        coloana--;
+        console.log(rand + " " + coloane[coloana%2]);
+        let ultimaCel = [rand,coloane[coloana%2]]
+        return ultimaCel;
 
     }
 
@@ -150,11 +157,14 @@ window.onload = ()=>{
 
     //! Aici adaug bitii necesari de final
     function adaugarePadding(dimenisuneActuala, dimensiuneNecesara){
-        let mesaj = [""];
+        let mesaj = new Array();
         let counter = 0;
         console.log("actual " + dimenisuneActuala);
         console.log(dimensiuneNecesara);
         while(dimenisuneActuala < dimensiuneNecesara && counter < 4){
+            if(counter == 0){
+                mesaj.push("");
+            }
             console.log("1");
             mesaj[0] += "0";
             counter++;
@@ -167,17 +177,16 @@ window.onload = ()=>{
             dimenisuneActuala++;
         }
         while(dimenisuneActuala < dimensiuneNecesara){
-            console.log("3");
             if(counter % 2 == 0){
-                mesaj.push["11101100"];
+                mesaj.push("11101100");
             }
             else{
-                mesaj.push["00010001"];
+                mesaj.push("00010001");
             }
             dimenisuneActuala+=8;
             counter+=1;
         }
-        console.log(mesaj);
+        console.log("padding: " + mesaj);
         
     }
 
@@ -464,6 +473,7 @@ window.onload = ()=>{
         let car;
         let mesajCodat = Array();
         let lungimeMesajFinala = 0;
+        let ultimaCelula;
 
 
         //! Aici transform mesjaul in binar
@@ -493,7 +503,9 @@ window.onload = ()=>{
                     counter++;
                 }
 
-                afisareMesaj(mesajCodat);
+                let coloane = ["T", "U"];
+                ultimaCelula = afisareMesaj(mesajCodat, coloane);
+                console.log("utlima " + ultimaCelula)
                 break;
 
             case "byte":
@@ -508,7 +520,9 @@ window.onload = ()=>{
                     mesajCodat.push(caractereActuale);
                     counter++;
                 }
-                afisareMesaj(mesajCodat);
+                coloane = ["U", "T"];
+                ultimaCelula = afisareMesaj(mesajCodat, coloane);
+                console.log("utlima " + ultimaCelula)
                 break;
         }
 
