@@ -1,6 +1,5 @@
 //O sa trec dimensiunea cu rosu
 //Am trecut codul tipului de date cu albastru
-//TODO termina paddingul
 //!([(4 * V) + 9], 8)
 window.onload = ()=>{
 
@@ -82,15 +81,20 @@ window.onload = ()=>{
     }
 
     //! parametrul este un array de valori binare
-    function afisareMesaj(mesajCodat, coloane){
+    function afisareMesaj(mesajCodat, coloane, rand, paritate){
         let lungime = mesajCodat.length;
-        let startRand = 15;
+        console.log("Mesajul encriptat este: " + mesajCodat);
+        console.log("Coloanele sunt: " + coloane);
+        console.log("Randul este: " + rand);
+        console.log("Paritatea este: " + paritate);
         let culori = ["green", "purple"];
-        let rand = startRand;
         let coloana = 0;
+        let ultimaCelula = new Array();
+        if(paritate == 1){
+            coloana = 1;
+        }
         let schimbareRand = -1;
         let checker;
-        let cel;
         
         for (let i = 0; i < lungime; i++){
             for(let j = 0; j < mesajCodat[i].length; j++){
@@ -103,9 +107,15 @@ window.onload = ()=>{
                     coloane = schimbareColoane(coloane);
                 }
 
-                cel = document.getElementsByClassName(coloane[coloana%2] + " " + rand.toString());
+                let cel = document.getElementsByClassName(coloane[coloana%2] + " " + rand.toString());
                 if(mesajCodat[i][j] == 1){
                     cel[0].style.backgroundColor = culori[i%2];
+                }
+
+                if(i == lungime - 1 && j == mesajCodat[lungime].length - 1){
+                    ultimaCelula.push(coloane[coloana%2],rand);
+                    console.log("celula: ");
+                    console.log(cel[0]);
                 }
 
                 if(coloana % 2 == 1){
@@ -115,16 +125,10 @@ window.onload = ()=>{
 
             }
 
+            console.log("ultima celula este " + ultimaCelula);
+            return ultimaCelula;
+
         }
-        console.log("mesajul codat este: " + mesajCodat);
-        console.log("merge");
-        if (coloana % 2 == 0){
-            rand-=schimbareRand;
-        }
-        coloana--;
-        console.log(rand + " " + coloane[coloana%2]);
-        let ultimaCel = [rand,coloane[coloana%2]]
-        return ultimaCel;
 
     }
 
@@ -152,19 +156,17 @@ window.onload = ()=>{
         }
 
 
+
     }
 
 
     //! Aici adaug bitii necesari de final
-    function adaugarePadding(dimenisuneActuala, dimensiuneNecesara){
-        let mesaj = new Array();
+    function adaugarePadding(dimenisuneActuala, dimensiuneNecesara, ultimaCelula){
+        let mesaj = [""];
         let counter = 0;
         console.log("actual " + dimenisuneActuala);
         console.log(dimensiuneNecesara);
         while(dimenisuneActuala < dimensiuneNecesara && counter < 4){
-            if(counter == 0){
-                mesaj.push("");
-            }
             console.log("1");
             mesaj[0] += "0";
             counter++;
@@ -177,6 +179,7 @@ window.onload = ()=>{
             dimenisuneActuala++;
         }
         while(dimenisuneActuala < dimensiuneNecesara){
+            console.log("3");
             if(counter % 2 == 0){
                 mesaj.push("11101100");
             }
@@ -186,7 +189,24 @@ window.onload = ()=>{
             dimenisuneActuala+=8;
             counter+=1;
         }
-        console.log("padding: " + mesaj);
+        console.log("paddingul este: " + mesaj);
+        let coloane = new Array();
+        let paritate;
+        let rand;
+
+        if ((ultimaCelula[0].charCodeAt(0) - "A".charCodeAt(0)) % 2 == 1){
+            coloane.push(String.fromCharCode(ultimaCelula[0].charCodeAt(0) + 1));
+            coloane.push(ultimaCelula[0]);
+            rand = ultimaCelula[1] + 1;
+            paritate = 0;
+        }else{
+            coloane.push(ultimaCelula[0]);
+            coloane.push(String.fromCharCode(ultimaCelula[0].charCodeAt(0) - 1));
+            rand = ultimaCelula[1];
+            paritate = 1;
+        }
+
+        afisareMesaj(mesaj, coloane, rand, paritate);
         
     }
 
@@ -473,6 +493,8 @@ window.onload = ()=>{
         let car;
         let mesajCodat = Array();
         let lungimeMesajFinala = 0;
+        let coloane = ["U", 'T'];
+        let rand = 15;
         let ultimaCelula;
 
 
@@ -503,9 +525,8 @@ window.onload = ()=>{
                     counter++;
                 }
 
-                let coloane = ["T", "U"];
-                ultimaCelula = afisareMesaj(mesajCodat, coloane);
-                console.log("utlima " + ultimaCelula)
+                ultimaCelula = afisareMesaj(mesajCodat, coloane, rand, 1);
+                console.log("ultima " + ultimaCelula);
                 break;
 
             case "byte":
@@ -520,14 +541,12 @@ window.onload = ()=>{
                     mesajCodat.push(caractereActuale);
                     counter++;
                 }
-                coloane = ["U", "T"];
-                ultimaCelula = afisareMesaj(mesajCodat, coloane);
-                console.log("utlima " + ultimaCelula)
+                ultimaCelula = afisareMesaj(mesajCodat, coloane, rand, 0);
                 break;
         }
 
         //! Aici vom face paddingul
-        adaugarePadding(lungimeMesajFinala, lungimeTotala);
+        adaugarePadding(lungimeMesajFinala, lungimeTotala, ultimaCelula);
 
 
     })
