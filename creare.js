@@ -59,11 +59,11 @@ window.onload = ()=>{
         }
 
         if(coloana < a){
-            return 2;
+            return 1;
         }
 
         if (rand == 7 || coloana == a+6){
-            return 3;
+            return 1;
         }
         
         return 0;
@@ -112,7 +112,7 @@ window.onload = ()=>{
                     cel[0].style.backgroundColor = culori[i%2];
                 }
 
-                if(i == lungime - 1 && j == mesajCodat[lungime].length - 1){
+                if(i == lungime - 1 && j == mesajCodat[i].length - 1){
                     ultimaCelula.push(coloane[coloana%2],rand);
                     console.log("celula: ");
                     console.log(cel[0]);
@@ -125,10 +125,11 @@ window.onload = ()=>{
 
             }
 
-            console.log("ultima celula este " + ultimaCelula);
-            return ultimaCelula;
 
         }
+        
+        console.log("ultima celula este " + ultimaCelula);
+        return ultimaCelula;
 
     }
 
