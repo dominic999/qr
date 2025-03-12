@@ -80,6 +80,15 @@ window.onload = ()=>{
         return coloane2;
     }
 
+    function setareSchimbareRand(coloana){
+
+        if(Math.floor(coloana.charCodeAt(0)/2) % 2 == 0){
+            return -1;
+        }
+        return 0;
+
+    }
+
     //! parametrul este un array de valori binare
     function afisareMesaj(mesajCodat, coloane, rand, paritate){
         let lungime = mesajCodat.length;
@@ -93,7 +102,8 @@ window.onload = ()=>{
         if(paritate == 1){
             coloana = 1;
         }
-        let schimbareRand = -1;
+        let schimbareRand = setareSchimbareRand(coloane[1]);
+        console.log("schimbarea de rand este: " + schimbareRand);
         let checker;
         
         for (let i = 0; i < lungime; i++){
@@ -107,9 +117,14 @@ window.onload = ()=>{
                     coloane = schimbareColoane(coloane);
                 }
 
+
                 let cel = document.getElementsByClassName(coloane[coloana%2] + " " + rand.toString());
                 if(mesajCodat[i][j] == 1){
                     cel[0].style.backgroundColor = culori[i%2];
+                }
+                if(i == 0 && j == 0 ){
+                    console.log("celula de pe care incep este: ");
+                    console.log(cel[0]);
                 }
 
                 if(i == lungime - 1 && j == mesajCodat[i].length - 1){
@@ -198,7 +213,8 @@ window.onload = ()=>{
         if ((ultimaCelula[0].charCodeAt(0) - "A".charCodeAt(0)) % 2 == 1){
             coloane.push(String.fromCharCode(ultimaCelula[0].charCodeAt(0) + 1));
             coloane.push(ultimaCelula[0]);
-            rand = ultimaCelula[1] + 1;
+            let schimbareRand = setareSchimbareRand(coloane[1]);
+            rand = ultimaCelula[1] + schimbareRand;
             paritate = 0;
         }else{
             coloane.push(ultimaCelula[0]);
@@ -206,6 +222,7 @@ window.onload = ()=>{
             rand = ultimaCelula[1];
             paritate = 1;
         }
+
 
         afisareMesaj(mesaj, coloane, rand, paritate);
         
